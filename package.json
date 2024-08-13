@@ -109,8 +109,9 @@
     "menus": {
       "scm/title": [
         {
-          "command": "extension.llm-auto-commit",
-          "group": "navigation"
+          "command": "llm-auto-commit.generateCommitMessage",
+          "group": "navigation",
+          "when": "scmProvider == git"
         }
       ]
     }

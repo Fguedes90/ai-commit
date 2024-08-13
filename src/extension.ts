@@ -35,6 +35,14 @@ export async function activate(context: vscode.ExtensionContext) {
       throw new Error('Failed to register command: llm-auto-commit.generateCommitMessage');
     }
 
+    // Create and register the Source Control button
+    const scmButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+    scmButton.command = 'llm-auto-commit.generateCommitMessage';
+    scmButton.text = "$(git-commit) Generate Commit";
+    scmButton.tooltip = "Generate commit message using LLM";
+    scmButton.show();
+    context.subscriptions.push(scmButton);
+
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration(e => {
         if (e.affectsConfiguration('llm-auto-commit')) {
