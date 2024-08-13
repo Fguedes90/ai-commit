@@ -38,21 +38,32 @@ export async function getRepo(arg) {
 
 export async function generateCommitMsg(arg) {
   try {
+    infoMsg('Starting generateCommitMsg...');
+    
     const repo = await getRepo(arg);
+    infoMsg(`Repository obtained: ${repo ? 'Yes' : 'No'}`);
+    
     const apiKey = getConfig<string>(ConfigKeys.OPENAI_API_KEY);
-    const diff = await getDiffStaged(repo);
+    infoMsg(`API Key obtained: ${apiKey ? 'Yes' : 'No'}`);
 
     if (!apiKey) {
       infoMsg('OpenAI API Key Not Set');
       return;
     }
 
+    const diff = await getDiffStaged(repo);
+    infoMsg(`Diff obtained, length: ${diff.length}`);
+
     infoMsg('gitRootPath: ' + repo.rootUri.fsPath);
     const scmInputBox = repo.inputBox as vscode.SourceControlInputBox;
+    infoMsg(`SCM Input Box obtained: ${scmInputBox ? 'Yes' : 'No'}`);
+
     const messages = await generateCommitMessageChatCompletionPrompt(diff);
+    infoMsg(`Chat completion prompt generated, messages count: ${messages.length}`);
     
     if (scmInputBox) {
       try {
+        infoMsg('Calling ChatGPTAPI...');
         const commitMessage = await ChatGPTAPI(messages);
         if (commitMessage) {
           scmInputBox.value = commitMessage;
@@ -62,11 +73,13 @@ export async function generateCommitMsg(arg) {
         }
       } catch (err) {
         errMsg('API ERROR: ', err);
+        console.error('Full API error:', err);
       }
     } else {
       errMsg('Unable to find the SCM input box.', '');
     }
   } catch (error) {
     errMsg('Error in generateCommitMsg: ', error);
+    console.error('Full error in generateCommitMsg:', error);
   }
 }
