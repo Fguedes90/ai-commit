@@ -5,11 +5,11 @@ export async function wait(timeMs = 300) {
 }
 
 export async function infoMsg(message: string) {
-  vscode.window.showInformationMessage(`[ai-commit] ${message}`);
+  vscode.window.showInformationMessage(`[llm-auto-commit] ${message}`);
 }
 
 export async function errMsg(msg: string, err: any) {
-  vscode.window.showErrorMessage(`[ai-commit] ${msg}, Error: ${err.message}`);
+  vscode.window.showErrorMessage(`[llm-auto-commit] ${msg}, Error: ${err.message}`);
 }
 
 export function removeConventionalCommitWord(message: string): string {

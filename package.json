@@ -1,48 +1,51 @@
 {
-  "name": "ai-commit",
-  "displayName": "AI Commit",
-  "description": "Use Azure/OpenAI API to review Git changes, generate conventional commit messages that meet the conventions, simplify the commit process, and keep the commit conventions consistent.",
+  "name": "llm-auto-commit",
+  "displayName": "LLM-AUTO-COMMIT",
+  "description": "Use LLM APIs to review Git changes, generate conventional commit messages that meet the conventions, simplify the commit process, and keep the commit conventions consistent.",
   "version": "0.0.5",
   "engines": {
-    "node": ">=16",
-    "vscode": "^1.77.0"
+    "node": ">=18",
+    "vscode": "^1.84.0"
   },
   "categories": [
     "Other"
   ],
   "keywords": [
-    "Azure",
     "OpenAI",
     "ChatGPT",
-    "GitEmoji",
     "Git Commit",
     "Conventional Commits",
     "Commitizen",
     "Commit Message",
     "Commit Message Generator",
-    "AI Commit",
+    "LLM Commit",
     "Auto Commit"
   ],
   "publisher": "sitoi",
-  "repository": "https://github.com/sitoi/ai-commit",
+  "repository": "https://github.com/sitoi/llm-auto-commit",
   "icon": "images/logo.png",
   "activationEvents": [
-    "onCommand:ai-commit"
+    "onCommand:llm-auto-commit"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "extension.ai-commit",
+        "command": "extension.llm-auto-commit",
         "icon": {
           "dark": "images/icon.svg",
           "light": "images/icon.svg"
         },
-        "title": "AI Commit"
+        "title": "LLM-AUTO-COMMIT"
+      },
+      {
+        "command": "llm-auto-commit.generateCommitMessage",
+        "title": "Generate Commit Message",
+        "category": "LLM-AUTO-COMMIT"
       }
     ],
     "configuration": {
       "properties": {
-        "ai-commit.AI_COMMIT_LANGUAGE": {
+        "llm-auto-commit.AI_COMMIT_LANGUAGE": {
           "default": "en",
           "description": "Commit message language",
           "enum": [
@@ -89,43 +92,28 @@
           ],
           "type": "string"
         },
-        "ai-commit.AZURE_API_VERSION": {
-          "default": "",
-          "description": "AZURE API VERSION",
-          "type": "string"
-        },
-        "ai-commit.EMOJI_ENABLED": {
-          "default": true,
-          "description": "Enable Emoji",
-          "type": "boolean"
-        },
-        "ai-commit.FULL_GITMOJI_SPEC": {
-          "default": false,
-          "description": "Enable full GitEmoji specification",
-          "type": "boolean"
-        },
-        "ai-commit.OPENAI_API_KEY": {
+        "llm-auto-commit.OPENAI_API_KEY": {
           "default": "",
           "description": "OpenAI API Key",
           "type": "string"
         },
-        "ai-commit.OPENAI_BASE_URL": {
+        "llm-auto-commit.OPENAI_BASE_URL": {
           "default": "",
           "description": "OpenAI BASE URL",
           "type": "string"
         },
-        "ai-commit.OPENAI_MODEL": {
+        "llm-auto-commit.OPENAI_MODEL": {
           "default": "gpt-3.5-turbo",
           "description": "OpenAI MODEL",
           "type": "string"
         }
       },
-      "title": "AI Commit"
+      "title": "LLM-AUTO-COMMIT"
     },
     "menus": {
       "scm/title": [
         {
-          "command": "extension.ai-commit",
+          "command": "extension.llm-auto-commit",
           "group": "navigation"
         }
       ]
@@ -143,7 +131,9 @@
     "test": "node ./out/test/runTest.js",
     "vscode:prepublish": "npm run build",
     "watch": "webpack --watch",
-    "watch-tests": "tsc -p . -w --outDir out"
+    "watch-tests": "tsc -p . -w --outDir out",
+    "test-all": "npm run lint && npm run test",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
@@ -160,7 +150,21 @@
     "ts-loader": "^9.4.2",
     "typescript": "^4.9.5",
     "webpack": "^5.76.3",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "conventional-changelog-cli": "^2.2.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "dependencies": {
     "openai": "^4.14.2",
