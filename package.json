@@ -25,20 +25,16 @@
   "repository": "https://github.com/sitoi/llm-auto-commit",
   "icon": "images/logo.png",
   "activationEvents": [
-    "onCommand:llm-auto-commit"
+    "onCommand:llm-auto-commit.generateCommitMessage"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "extension.llm-auto-commit",
+        "command": "llm-auto-commit.generateCommitMessage",
         "icon": {
           "dark": "images/icon.svg",
           "light": "images/icon.svg"
         },
-        "title": "LLM-AUTO-COMMIT"
-      },
-      {
-        "command": "llm-auto-commit.generateCommitMessage",
         "title": "Generate Commit Message",
         "category": "LLM-AUTO-COMMIT"
       }

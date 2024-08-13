@@ -11,25 +11,29 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(statusBarItem);
 
     const registerCommand = (commandId: string) => {
-      context.subscriptions.push(
-        vscode.commands.registerCommand(commandId, async (arg) => {
-          statusBarItem.text = "$(sync~spin) Generating commit message...";
-          statusBarItem.show();
-          try {
-            infoMsg(`Executing command: ${commandId}`);
-            await aiCommitController(arg);
-            infoMsg(`Command ${commandId} executed successfully`);
-          } catch (error) {
-            errMsg(`Error executing ${commandId}`, error);
-          } finally {
-            statusBarItem.hide();
-          }
-        })
-      );
+      const disposable = vscode.commands.registerCommand(commandId, async (arg) => {
+        statusBarItem.text = "$(sync~spin) Generating commit message...";
+        statusBarItem.show();
+        try {
+          infoMsg(`Executing command: ${commandId}`);
+          await aiCommitController(arg);
+          infoMsg(`Command ${commandId} executed successfully`);
+        } catch (error) {
+          errMsg(`Error executing ${commandId}`, error);
+          vscode.window.showErrorMessage(`Failed to generate commit message: ${error.message}`);
+        } finally {
+          statusBarItem.hide();
+        }
+      });
+      context.subscriptions.push(disposable);
+      return disposable;
     };
 
-    registerCommand('extension.llm-auto-commit');
-    registerCommand('llm-auto-commit.generateCommitMessage');
+    const disposable = registerCommand('llm-auto-commit.generateCommitMessage');
+    
+    if (!disposable) {
+      throw new Error('Failed to register command: llm-auto-commit.generateCommitMessage');
+    }
 
     context.subscriptions.push(
       vscode.workspace.onDidChangeConfiguration(e => {
@@ -42,6 +46,7 @@ export async function activate(context: vscode.ExtensionContext) {
     infoMsg('LLM-AUTO-COMMIT extension activated');
   } catch (error) {
     vscode.window.showErrorMessage(`Failed to activate LLM-AUTO-COMMIT: ${error.message}`);
+    console.error('Activation error:', error);
   }
 }
 
