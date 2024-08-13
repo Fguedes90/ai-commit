@@ -10,16 +10,6 @@ Leverage LLM APIs to streamline your Git workflow: automatically review changes,
 
 **English** · [简体中文](./README.zh_CN.md) · [Report Bug][github-issues-link] · [Request Feature][github-issues-link]
 
-<!-- SHIELD GROUP -->
-
-[![][github-contributors-shield]][github-contributors-link]
-[![][github-forks-shield]][github-forks-link]
-[![][github-stars-shield]][github-stars-link]
-[![][github-issues-shield]][github-issues-link]
-[![][vscode-marketplace-shield]][vscode-marketplace-link]
-[![][total-installs-shield]][total-installs-link]
-[![][avarage-rating-shield]][avarage-rating-link]
-[![][github-license-shield]][github-license-link]
 
 ![LLM-AUTO-COMMIT Demo](https://github.com/sitoi/ai-commit/blob/main/aicommit.gif?raw=true)
 

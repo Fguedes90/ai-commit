@@ -37,31 +37,36 @@ export async function getRepo(arg) {
 }
 
 export async function generateCommitMsg(arg) {
-  const repo = await getRepo(arg);
-  const apiKey = getConfig<string>(ConfigKeys.OPENAI_API_KEY);
-  const diff = await getDiffStaged(repo);
+  try {
+    const repo = await getRepo(arg);
+    const apiKey = getConfig<string>(ConfigKeys.OPENAI_API_KEY);
+    const diff = await getDiffStaged(repo);
 
-  if (!apiKey) {
-    infoMsg('OpenAI API Key Not Set');
-    return;
-  }
+    if (!apiKey) {
+      infoMsg('OpenAI API Key Not Set');
+      return;
+    }
 
-  infoMsg('gitRootPath: ' + repo.rootUri.fsPath);
-  const scmInputBox = repo.inputBox as vscode.SourceControlInputBox;
-  const messages = await generateCommitMessageChatCompletionPrompt(diff);
-  if (scmInputBox) {
-    const edit = new vscode.WorkspaceEdit();
-
-    scmInputBox.value = '';
-    ChatGPTAPI(messages)
-      .then((res) => {
-        scmInputBox.value += res;
-      })
-      .catch((err) => {
+    infoMsg('gitRootPath: ' + repo.rootUri.fsPath);
+    const scmInputBox = repo.inputBox as vscode.SourceControlInputBox;
+    const messages = await generateCommitMessageChatCompletionPrompt(diff);
+    
+    if (scmInputBox) {
+      try {
+        const commitMessage = await ChatGPTAPI(messages);
+        if (commitMessage) {
+          scmInputBox.value = commitMessage;
+          infoMsg('Commit message generated successfully');
+        } else {
+          errMsg('Failed to generate commit message', 'Empty response from API');
+        }
+      } catch (err) {
         errMsg('API ERROR: ', err);
-      });
-    await vscode.workspace.applyEdit(edit);
-  } else {
-    errMsg('Unable to find the SCM input box.', '');
+      }
+    } else {
+      errMsg('Unable to find the SCM input box.', '');
+    }
+  } catch (error) {
+    errMsg('Error in generateCommitMsg: ', error);
   }
 }
